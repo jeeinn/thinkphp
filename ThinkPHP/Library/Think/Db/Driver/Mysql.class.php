@@ -111,7 +111,12 @@ class Mysql extends Driver
             E('not support data:' . $key);
         }
 
-        if ('*' != $key && !preg_match('/[,\'\"\*\(\)`.\s]/', $key)) {
+        if ($strict && is_numeric($key)) {
+            return $key;
+        } elseif ($strict && false !== stripos($key, '.')) {
+            $arr = explode('.', $key);
+            $key = $arr[0] . '.`' . $arr[1] . '`';
+        } elseif ($strict || (!is_numeric($key) && !preg_match('/[,\'\"\*\(\)`.\s]/', $key))) {
             $key = '`' . $key . '`';
         }
         return $key;
